@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:servicemangerapp/src/data/model/cartPart.dart';
 import 'package:servicemangerapp/src/data/model/service_order.dart';
 import 'package:servicemangerapp/src/data/provider/listPart_provider.dart';
 import 'package:servicemangerapp/src/extensions/extensions.dart';
@@ -19,7 +20,6 @@ class _PageQuoteState extends State<PageQuote> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Orçamento'),
@@ -219,16 +219,14 @@ class _PageQuoteState extends State<PageQuote> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 5, horizontal: 10),
                         margin: const EdgeInsets.only(bottom: 10),
-                        child: Column(
+                        child: const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
                               padding: EdgeInsets.all(10.0),
-                              child: Obx(() => Text(
-                                    listPartController.partItemsList.isEmpty
-                                        ? 'Sem peças'
-                                        : 'PEÇAS ADICIONADAS',
-                                  )),
+                              child: Text(
+                                'Minhas peças',
+                              ),
                             ),
                           ],
                         ),
@@ -265,7 +263,7 @@ class _PageQuoteState extends State<PageQuote> {
       builder: (context) {
         return SizedBox(
           width: double.maxFinite,
-          height: 200,
+          height: 400,
           child: Column(
             children: [
               Flexible(
@@ -274,18 +272,16 @@ class _PageQuoteState extends State<PageQuote> {
                     return ListView.builder(
                         itemCount: listPartController.partItemsList.length,
                         itemBuilder: (context, index) {
-                          final part = listPartController.partItemsList[index];
+                          final CartPart part =
+                              listPartController.partItemsList[index];
                           return ListTile(
-                            tileColor: part.quantity.value == 0
-                                ? Color.fromARGB(255, 247, 78, 95)
-                                : Colors.white,
                             title: Text(part.name),
                             subtitle: Obx(() => Text(part.quantity.toString())),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.remove),
+                                  icon: const Icon(Icons.remove),
                                   onPressed: () {
                                     if (part.quantity > 1) {
                                       listPartController.updateItemQuantity(
@@ -293,11 +289,12 @@ class _PageQuoteState extends State<PageQuote> {
                                     } else {
                                       listPartController.updateItemQuantity(
                                           part, 0);
+                                      showConfirmationDialog(context, part);
                                     }
                                   },
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons.add),
+                                  icon: const Icon(Icons.add),
                                   onPressed: () =>
                                       listPartController.updateItemQuantity(
                                           part, part.quantity.value + 1),
@@ -321,5 +318,39 @@ class _PageQuoteState extends State<PageQuote> {
         );
       },
     );
+  }
+
+  Future<void> showConfirmationDialog(
+      BuildContext context, CartPart part) async {
+    return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // O usuário deve tocar em um dos botões
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: const Text('Confirmar Exclusão'),
+            content:
+                const Text('Você tem certeza que deseja excluir este item?'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancelar'),
+                onPressed: () {
+                  listPartController.updateItemQuantity(
+                      part, part.quantity.value + 1);
+                  Get.back(); // Fecha o diálogo
+                },
+              ),
+              TextButton(
+                child: const Text('Excluir'),
+                onPressed: () {
+                  listPartController.removeItem(part);
+                  Get.back();
+
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Item excluído com sucesso!')));
+                },
+              ),
+            ],
+          );
+        });
   }
 }

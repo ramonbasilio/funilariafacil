@@ -4,9 +4,8 @@ import 'package:servicemangerapp/src/data/model/part.dart';
 
 class ListPartController extends GetxController {
   var partItemsList = <CartPart>[].obs;
+  var selectedItemsParts = <Part>[].obs;
   var totalPrice = 0.0.obs;
-
-  
 
   void addItem(CartPart part) {
     partItemsList.add(part);

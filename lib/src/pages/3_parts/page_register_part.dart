@@ -1,10 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:servicemangerapp/src/data/model/part.dart';
 import 'package:servicemangerapp/src/data/repository/firebase_cloud_firestore.dart';
-import 'package:servicemangerapp/src/pages/3_parts/page_confirmation_part.dart';
 import 'package:servicemangerapp/src/pages/widgets/camera/camera_init_mult_img.dart';
 import 'package:servicemangerapp/src/pages/widgets/camera/camera_init_one_img.dart';
 import 'package:servicemangerapp/src/pages/widgets/camera_widget_3.dart';

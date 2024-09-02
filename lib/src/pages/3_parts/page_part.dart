@@ -34,7 +34,7 @@ class _PagePartState extends State<PagePart> {
         children: <Widget>[
           BottomNavigationBar(
             selectedLabelStyle:
-               const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             backgroundColor: Colors.grey.shade300,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(

@@ -24,6 +24,9 @@ class _PageListPartState extends State<PageListPart> {
     parts = clientController.allParts;
     clientController.getAllPartsProvider();
     super.initState();
+    for (var i in listPartController.partItemsList) {
+      print('Nome da peça: ${i.name}');
+    }
   }
 
   @override
@@ -36,7 +39,7 @@ class _PageListPartState extends State<PageListPart> {
               child: ListView.builder(
                 itemCount: parts.length,
                 itemBuilder: (context, index) {
-                  Part item = parts[index];
+                  final item = parts[index];
                   final isSelected = selectedParts.contains(item);
                   return Column(
                     children: [
@@ -80,6 +83,7 @@ class _PageListPartState extends State<PageListPart> {
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green.shade100),
             onPressed: () {
+              //clientController.listParts.value = selectedParts;
               List<CartPart> cartPartList = [];
               if (listPartController.partItemsList.isEmpty) {
                 print('Lista listPartController.partItemsList estava vazia');
@@ -93,15 +97,12 @@ class _PageListPartState extends State<PageListPart> {
                   id++;
                   cartPartList.add(cartPart);
                 }
-                for (var i in cartPartList) {
-                  print('Itens: ${i.name}');
-                }
                 listPartController.partItemsList.value = cartPartList;
               }
 
-              if (cartPartList.isEmpty) {
-                print(
-                    'Lista listPartController.partItemsList NÃO estava vazia');
+              if (listPartController.partItemsList.isNotEmpty &&
+                  selectedParts.isNotEmpty) {
+                    print('Lista listPartController.partItemsList NÃO estava vazia');
                 cartPartList = listPartController.partItemsList;
                 int id = cartPartList.length + 1;
                 for (var part in selectedParts) {
@@ -117,7 +118,6 @@ class _PageListPartState extends State<PageListPart> {
               }
 
               // Get.off(() => PageConfirmationPart(part: _cartPartList));
-              //listPartController.selectedItemsParts.value = selectedParts;
               Get.back();
             },
             child: const Text('Utilizar no orçamento'),
@@ -132,7 +132,7 @@ class _PageListPartState extends State<PageListPart> {
       context: context,
       builder: (context) {
         return SizedBox(
-          height: 200,
+          height: 250,
           child: Column(
             children: [
               const Padding(
