@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:servicemangerapp/src/data/provider/listPart_Provider.dart';
 import 'package:servicemangerapp/src/data/provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:servicemangerapp/src/pages/0_pages_login/page_splash/page_splash.dart';
 import 'package:servicemangerapp/src/pages/3_parts/page_part.dart';
+import 'package:servicemangerapp/test/home_teste.dart';
+import 'package:servicemangerapp/test/model.dart';
+import 'package:servicemangerapp/test/teste.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -12,8 +16,16 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(ChangeNotifierProvider(
-      create: (context) => MyProvider(), child: const MyApp()));
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => MyProvider()),
+        ChangeNotifierProvider(create: (context) => ListPartProvider2()),
+        ChangeNotifierProvider(create: (context) => PartsProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -28,7 +40,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const PageSplash(),
+      home: PageSplash(),
     );
   }
 }

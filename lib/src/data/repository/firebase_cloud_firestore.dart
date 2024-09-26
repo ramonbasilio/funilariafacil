@@ -132,18 +132,18 @@ class FirebaseCloudFirestore {
   Future<void> registerPart({required Part part}) async {
     await _firebaseFirestore
         .collection('User')
-        .doc('graziellacsousa@gmail.com')
+        .doc(_firebaseAuth.currentUser!.email)
         .collection('Parts')
-        .doc(part.idPart)
+        .doc(part.id)
         .set(part.toMap());
   }
 
-    Future<List<Part>?> getAllParts() async {
+  Future<List<Part>?> getAllParts() async {
     List<Part> listParts = [];
     try {
       await _firebaseFirestore
           .collection('User')
-          .doc('graziellacsousa@gmail.com')
+          .doc(_firebaseAuth.currentUser!.email)
           .collection('Parts')
           .get()
           .then((querySnapshot) {

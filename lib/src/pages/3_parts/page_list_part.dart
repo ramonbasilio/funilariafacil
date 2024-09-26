@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:servicemangerapp/src/data/model/cartPart.dart';
 import 'package:servicemangerapp/src/data/model/part.dart';
 import 'package:servicemangerapp/src/data/provider/common_provider.dart';
 import 'package:servicemangerapp/src/data/provider/firebase_provider.dart';
-import 'package:servicemangerapp/src/data/provider/listPart_provider.dart';
+import 'package:servicemangerapp/src/data/provider/listPart_Getx.dart';
+import 'package:servicemangerapp/src/data/provider/listPart_Provider.dart';
+import 'package:servicemangerapp/src/data/provider/provider.dart';
 
 class PageListPart extends StatefulWidget {
   const PageListPart({super.key});
@@ -14,61 +17,110 @@ class PageListPart extends StatefulWidget {
 }
 
 class _PageListPartState extends State<PageListPart> {
-  ManagerProvider clientController = Get.put(ManagerProvider());
-  ListPartController listPartController = Get.find();
+  ListPartControllerGext listPartController = Get.put(ListPartControllerGext());
   List<Part> selectedParts = [];
-  List<Part> parts = [];
+  Future<List<Part>>? _future;
+
+  Future<List<Part>> myFuture() async {
+    return listPartController.getAllPartsProvider();
+  }
 
   @override
   void initState() {
-    parts = clientController.allParts;
-    clientController.getAllPartsProvider();
     super.initState();
+    _future = myFuture();
   }
 
   @override
   Widget build(BuildContext context) {
+    ListPartProvider2 myProvider = Provider.of<ListPartProvider2>(context);
+
     return Scaffold(
       body: Column(
         children: [
-          Obx(
-            () => Flexible(
-              child: ListView.builder(
-                itemCount: parts.length,
-                itemBuilder: (context, index) {
-                  Part item = parts[index];
-                  final isSelected = selectedParts.contains(item);
-                  return Column(
-                    children: [
-                      ListTile(
-                        onLongPress: (() {
-                          _showDetailPart(context, parts[index]);
-                        }),
-                        trailing: GestureDetector(
+          FutureBuilder<List<Part>>(
+            future: _future,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                List<Part> data = snapshot.data!;
+                myProvider.setAllParts(data);
+                //List<CartPart2> partsCart2 = myProvider.partsCart2;
+                selectedParts = myProvider.listPartSelected;
+                return Flexible(
+                    child: ListView.builder(
+                  itemCount: data.length,
+                  itemBuilder: (context, index) {
+                    Part part = data[index];
+                    bool isSelected =
+                        myProvider.listPartSelected.contains(part);
+                    int a = 1;
+                    for (var i in myProvider.listPartSelected) {
+                      print('Teste $a ${part == i}');
+                      a++;
+                    }
+
+                    return Column(
+                      children: [
+                        ListTile(
                           onTap: () {
-                            setState(() {
-                              if (isSelected) {
-                                selectedParts.remove(parts[index]);
-                              } else {
-                                selectedParts.add(parts[index]);
-                              }
-                            });
+                            myProvider.togglePartSelection(part, part.id);
                           },
-                          child: Icon(
-                            isSelected
-                                ? Icons.check_box
-                                : Icons.check_box_outline_blank,
+                          title: Text(part.name),
+                          trailing: GestureDetector(
+                            child: Icon(
+                              isSelected
+                                  ? Icons.check_box
+                                  : Icons.check_box_outline_blank,
+                            ),
                           ),
                         ),
-                        title: Text(parts[index].namePart),
-                      ),
-                      const Divider()
-                    ],
-                  );
-                },
-              ),
-            ),
+                      ],
+                    );
+                  },
+                ));
+              } else {
+                return CircularProgressIndicator();
+              }
+            },
           ),
+          // Obx(
+          //   () => Flexible(
+          //     child: ListView.builder(
+          //       itemCount: parts.length,
+          //       itemBuilder: (context, index) {
+          //         Part item = parts[index];
+          //         final isSelected = selectedParts.contains(item);
+          //         return Column(
+          //           children: [
+          //             ListTile(
+          //               onLongPress: (() {
+          //                 _showDetailPart(context, parts[index]);
+          //               }),
+          //               trailing: GestureDetector(
+          //                 onTap: () {
+          //                   setState(() {
+          //                     if (isSelected) {
+          //                       selectedParts.remove(parts[index]);
+          //                     } else {
+          //                       selectedParts.add(parts[index]);
+          //                     }
+          //                   });
+          //                 },
+          //                 child: Icon(
+          //                   isSelected
+          //                       ? Icons.check_box
+          //                       : Icons.check_box_outline_blank,
+          //                 ),
+          //               ),
+          //               title: Text(parts[index].name),
+          //             ),
+          //             const Divider()
+          //           ],
+          //         );
+          //       },
+          //     ),
+          //   ),
+          // ),
         ],
       ),
       bottomNavigationBar: Container(
@@ -86,10 +138,10 @@ class _PageListPartState extends State<PageListPart> {
                 int id = 0;
                 for (var part in selectedParts) {
                   CartPart cartPart = CartPart(
-                      name: part.namePart,
-                      quantity: part.quantityPart,
+                      name: part.name,
+                      quantity: part.quantity,
                       index: id,
-                      price: part.pricePart);
+                      price: part.price);
                   id++;
                   cartPartList.add(cartPart);
                 }
@@ -106,10 +158,10 @@ class _PageListPartState extends State<PageListPart> {
                 int id = cartPartList.length + 1;
                 for (var part in selectedParts) {
                   CartPart cartPart = CartPart(
-                      name: part.namePart,
-                      quantity: part.quantityPart,
+                      name: part.name,
+                      quantity: part.quantity,
                       index: id,
-                      price: part.pricePart);
+                      price: part.price);
                   id++;
                   cartPartList.add(cartPart);
                 }
@@ -142,9 +194,9 @@ class _PageListPartState extends State<PageListPart> {
                   style: TextStyle(fontSize: 18),
                 ),
               ),
-              Text('Nome da peça: ${part.namePart}'),
-              Text('Detalhes: ${part.detailsPart}'),
-              Text('Unidade de medida: ${part.quantityPart}'),
+              Text('Nome da peça: ${part.name}'),
+              Text('Detalhes: ${part.detail}'),
+              Text('Unidade de medida: ${part.quantity}'),
               Row(
                 children: [
                   TextButton(

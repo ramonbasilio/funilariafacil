@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:servicemangerapp/src/pages/3_parts/page_list_part%20copy.dart';
 import 'package:servicemangerapp/src/pages/3_parts/page_list_part.dart';
 import 'package:servicemangerapp/src/pages/3_parts/page_register_part.dart';
 

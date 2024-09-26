@@ -34,11 +34,23 @@ class _SignaturewidgetState extends State<Signaturewidget> {
     MyProvider value = Provider.of<MyProvider>(context, listen: false);
     return Column(
       children: [
-        Signature(
-          key: const Key('signature'),
-          controller: controller,
-          height: 300,
-          backgroundColor: Colors.grey.shade300,
+        Container(
+                decoration: BoxDecoration(
+        border: const Border(
+          left: BorderSide(
+            color: Colors.black,
+            width: 5.0,
+          ),
+        ),
+        borderRadius: BorderRadius.circular(5),
+        color: Colors.grey.shade200,
+      ),
+          child: Signature(
+            key: const Key('signature'),
+            controller: controller,
+            height: 300,
+            backgroundColor: Colors.grey.shade300,
+          ),
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -86,9 +98,9 @@ class _SignaturewidgetState extends State<Signaturewidget> {
                             style: TextStyle(color: Colors.white),
                           )
                         : SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator()),
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator()),
                   )),
             ],
           ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:servicemangerapp/src/data/model/part.dart';
 import 'package:servicemangerapp/src/data/repository/firebase_cloud_firestore.dart';
+import 'package:servicemangerapp/src/pages/3_parts/page_list_part.dart';
 import 'package:servicemangerapp/src/pages/widgets/camera/camera_init_mult_img.dart';
 import 'package:servicemangerapp/src/pages/widgets/camera/camera_init_one_img.dart';
 import 'package:servicemangerapp/src/pages/widgets/camera_widget_3.dart';
@@ -21,11 +22,42 @@ class _PageRegisterPartState extends State<PageRegisterPart> {
   final TextEditingController _detailsController = TextEditingController();
   final TextEditingController _unitController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
+  // final TextEditingController _quantityController = TextEditingController();
 
   final List<String> _unidades = ['Kg', 'Litro', 'Metro', 'Unidade', 'Caixa'];
   String stringImagePath = '';
   bool isChecked = false;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _priceController.addListener(() {
+  //     String sanitizedText =
+  //         _priceController.text.replaceAll(RegExp(r'[^0-9,.]'), '');
+  //     sanitizedText = sanitizedText.replaceAll(',', '.');
+  //     if (sanitizedText != _priceController.text) {
+  //       _priceController.value = TextEditingValue(
+  //         text: sanitizedText,
+  //         selection: TextSelection.fromPosition(
+  //           TextPosition(offset: sanitizedText.length),
+  //         ),
+  //       );
+  //     }
+  //   });
+  // }
+
+  double parseToDouble(String input) {
+    // Remove espaços em branco
+    input = input.trim();
+    input = input.replaceAll(RegExp(r'[^0-9,.]'), '');
+    input = input.replaceAll(',', '.');
+    // Tenta converter a entrada para double
+    try {
+      return double.parse(input);
+    } catch (e) {
+      throw FormatException("Valor inválido: $input");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +120,8 @@ class _PageRegisterPartState extends State<PageRegisterPart> {
                 decoration: const InputDecoration(
                   labelText: 'Preço',
                 ),
-                keyboardType: TextInputType.number,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, insira o preço';
@@ -101,23 +134,7 @@ class _PageRegisterPartState extends State<PageRegisterPart> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _quantityController,
-                decoration: const InputDecoration(
-                  labelText: 'Quantidade',
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor, insira a quantidade';
-                  }
-                  if (int.tryParse(value) == null) {
-                    return 'Por favor, insira um valor inteiro válido';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 24),
+              //const SizedBox(height: 24),
               CameraInitOneImg(
                 finalReturn: (String value) {
                   stringImagePath = value;
@@ -154,43 +171,19 @@ class _PageRegisterPartState extends State<PageRegisterPart> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green.shade100),
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processando dados')),
-                  );
-                  Part part = Part.create(
-                    namePart: _nameController.text,
-                    detailsPart: _detailsController.text,
-                    unitPart: _unitController.text,
-                    pricePart: double.parse(
-                        _priceController.text.replaceAll(',', '.')),
-                    quantityPart: int.parse(_quantityController.text),
-                  );
-                  FirebaseCloudFirestore().registerPart(part: part);
-
-                  // Part partTest1 = Part.create(
-                  //     partName: 'Tela Celular',
-                  //     partUnid: 'Unidade',
-                  //     partValue: '100,00',
-                  //     partDetails: 'Tela Iphone-13');
-
-                  // Part partTest2 = Part.create(
-                  //     partName: 'Botão',
-                  //     partUnid: 'Unidade',
-                  //     partValue: '200,00',
-                  //     partDetails: 'Tela Iphone-13');
-
-                  // Part partTest3 = Part.create(
-                  //     partName: 'Capinha',
-                  //     partUnid: 'Unidade',
-                  //     partValue: '100,00',
-                  //     partDetails: 'Tela Iphone-13');
-
-                  // List<Part> listPart = [];
-                  // listPart.addAll([partTest1, partTest2, partTest3]);
-                  // Get.to(() => PageConfirmationPart(part: listPart));
-                  // if (_formKey.currentState!.validate()) {
-                  // }
+                onPressed: () async {
+                  Part part = Part(
+                      name: _nameController.text,
+                      detail: _detailsController.text,
+                      unit: _unitController.text,
+                      price: parseToDouble(_priceController.text));
+                  await FirebaseCloudFirestore()
+                      .registerPart(part: part)
+                      .then((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Peça salva com sucesso!')),
+                    );
+                  });
                 },
                 child: const Text('Salvar / Utilizar no orçamento'),
               ),

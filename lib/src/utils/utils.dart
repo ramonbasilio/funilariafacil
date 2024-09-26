@@ -31,4 +31,10 @@ class Utils {
     // Retorna o caminho para o arquivo de imagem salvo
     return path;
   }
+
+  static sortList(List<String> lista) {
+    if (lista.isNotEmpty) {
+      lista.sort((b, a) => b.compareTo(a));
+    }
+  }
 }

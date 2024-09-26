@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:servicemangerapp/src/data/model/cartPart.dart';
 import 'package:servicemangerapp/src/data/model/service_order.dart';
-import 'package:servicemangerapp/src/data/provider/listPart_provider.dart';
+import 'package:servicemangerapp/src/data/provider/listPart_Getx.dart';
 import 'package:servicemangerapp/src/extensions/extensions.dart';
 import 'package:servicemangerapp/src/pages/3_parts/page_part.dart';
 
@@ -16,7 +16,7 @@ class PageQuote extends StatefulWidget {
 }
 
 class _PageQuoteState extends State<PageQuote> {
-  ListPartController listPartController = Get.put(ListPartController());
+  ListPartControllerGext listPartController = Get.put(ListPartControllerGext());
 
   @override
   Widget build(BuildContext context) {

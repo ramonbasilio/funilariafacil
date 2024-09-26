@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:servicemangerapp/src/data/provider/firebase_provider.dart';
 import 'package:servicemangerapp/src/pages/2_pages_buttom/page_clients/page_list_clientes.dart';
+import 'package:servicemangerapp/src/pages/2_pages_buttom/page_make_service_order/new_page_make_so.dart';
 import 'package:servicemangerapp/src/pages/2_pages_buttom/page_make_service_order/page_make_service_order.dart';
 import 'package:servicemangerapp/src/pages/2_pages_buttom/page_my_service_orders/page_list_service_orders.dart';
+import 'package:servicemangerapp/src/pages/3_parts/page_part.dart';
 import 'package:servicemangerapp/src/pages/widgets/buttomHomePageWidget.dart';
 import 'package:servicemangerapp/src/pages/widgets/drawerWIdget.dart';
 import 'package:servicemangerapp/src/pages/widgets/statusServiceWidget.dart';
@@ -63,9 +65,13 @@ class PageHome extends StatelessWidget {
                     func: (() {
                       int numberServiceOrder =
                           Utils.gerenateNumerServiceOrder();
-                      Get.to(() => PageMakeServiceOrder(
+
+                      Get.to(() => NewPageMakeSo(
                             numberServiceOrder: numberServiceOrder,
                           ));
+                      // Get.to(() => PageMakeServiceOrder(
+                      //       numberServiceOrder: numberServiceOrder,
+                      //     ));
                     }),
                     nameButtom: 'Criar Ordem de Serviço',
                   ),
@@ -76,8 +82,10 @@ class PageHome extends StatelessWidget {
                     nameButtom: 'Minhas Ordens de Serviço',
                   ),
                   ButtomHomePageWidget2(
-                    func: (() {}),
-                    nameButtom: 'Orçamentos',
+                    func: (() {
+                      Get.to(() => const PagePart());
+                    }),
+                    nameButtom: 'Peças',
                   ),
                 ],
               ),

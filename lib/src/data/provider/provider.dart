@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:servicemangerapp/src/data/model/part.dart';
 
 class MyProvider extends ChangeNotifier {
   List<String> listPathImages = [];
+  List<Part> listPartSelected = [];
   String urlDownload = '';
   bool controllSign = false;
 
@@ -25,4 +27,14 @@ class MyProvider extends ChangeNotifier {
   String getUrl() {
     return urlDownload;
   }
+
+  // void addListPartSelected(Part part) {
+  //   listPartSelected.add(part);
+  //   notifyListeners();
+  // }
+
+  //   void removeListPartSelected(Part part) {
+  //   listPartSelected.remove(part);
+  //   notifyListeners();
+  // }
 }
