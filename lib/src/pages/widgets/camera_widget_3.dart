@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:servicemangerapp/src/pages/widgets/page_preview_camera.dart';
+import 'package:servicemangerapp/src/pages/widgets/page_preview_camera%20copy.dart';
 
 class CameraWidget3 extends StatefulWidget {
   final Function(List<File>) finalReturn;

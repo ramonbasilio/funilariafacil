@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:servicemangerapp/src/pages/widgets/page_preview_camera.dart';
+import 'package:servicemangerapp/src/pages/widgets/page_preview_camera%20copy.dart';
 
 class Camera extends StatefulWidget {
   final Function(List<File>) finalReturn;
@@ -31,7 +31,7 @@ class _CameraState extends State<Camera> {
           ),
         ),
         borderRadius: BorderRadius.circular(5),
-        color: Colors.grey.shade200,
+        color: Colors.grey.shade300,
       ),
       width: double.infinity,
       padding: EdgeInsets.only(top: 10),

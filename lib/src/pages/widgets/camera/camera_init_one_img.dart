@@ -8,7 +8,7 @@ import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:image_editor_plus/options.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:servicemangerapp/src/pages/widgets/camera/camera_open.dart';
-import 'package:servicemangerapp/src/pages/widgets/page_preview_camera.dart';
+import 'package:servicemangerapp/src/pages/widgets/page_preview_camera%20copy.dart';
 import 'package:servicemangerapp/src/utils/utils.dart';
 
 class CameraInitOneImg extends StatefulWidget {

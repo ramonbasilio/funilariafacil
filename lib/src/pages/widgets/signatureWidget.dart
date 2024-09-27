@@ -35,16 +35,16 @@ class _SignaturewidgetState extends State<Signaturewidget> {
     return Column(
       children: [
         Container(
-                decoration: BoxDecoration(
-        border: const Border(
-          left: BorderSide(
-            color: Colors.black,
-            width: 5.0,
+          decoration: BoxDecoration(
+            border: const Border(
+              left: BorderSide(
+                color: Colors.black,
+                width: 5.0,
+              ),
+            ),
+            borderRadius: BorderRadius.circular(5),
+            color: Colors.grey.shade200,
           ),
-        ),
-        borderRadius: BorderRadius.circular(5),
-        color: Colors.grey.shade200,
-      ),
           child: Signature(
             key: const Key('signature'),
             controller: controller,
@@ -81,7 +81,7 @@ class _SignaturewidgetState extends State<Signaturewidget> {
                         backgroundColor: Colors.blueAccent),
                     onPressed: () async {
                       controllSign.value = true;
-                      await Future.delayed(Duration(seconds: 2));
+                      await Future.delayed(Duration(seconds: 1));
                       value.controllSign = true;
                       if (controller.isNotEmpty) {
                         await controller.toPngBytes().then((data) {

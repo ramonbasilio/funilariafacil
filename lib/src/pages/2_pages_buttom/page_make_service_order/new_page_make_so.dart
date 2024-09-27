@@ -1,8 +1,7 @@
-import 'dart:ffi';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'package:servicemangerapp/src/data/model/car.dart';
 import 'package:servicemangerapp/src/data/model/client.dart';
 import 'package:servicemangerapp/src/data/provider/firebase_provider.dart';
@@ -32,12 +31,14 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
   var notesCar = ''.obs;
   var discription = ''.obs;
 
+  var clientValidation = false.obs;
+
   List<File> listImagePath = [];
   List<int> listSignData = [];
 
-  var validateClientControll = false.obs;
+  //RxBool validateClientControll = false.obs;
 
-  Client? addClient;
+  Client? client;
   Car? car;
 
   @override
@@ -63,51 +64,51 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                     iconSize: 30,
                     onPressed: () async {
                       managerProvider.controlAddClientPage.value = true;
-                      addClient = await Get.to(() => PageListClientes());
-                      if (addClient != null) {
-                        nameClient.value = addClient!.name;
-                        phoneClient.value = addClient!.phone;
-                        emailClient.value = addClient!.email;
-                        validateClientControll.value = false;
+                      client = await Get.to(() => PageListClientes());
+                      if (client != null) {
+                        nameClient.value = client!.name;
+                        phoneClient.value = client!.phone;
+                        emailClient.value = client!.email;
+                        clientValidation.value = true;
                       }
                       managerProvider.controlAddClientPage.value = false;
                     },
                     icon: const Icon(Icons.add),
                   ),
-                  validateClientControll.value
-                      ? const Text(
-                          'Adicione um cliente',
-                          style: TextStyle(color: Colors.red),
-                        )
-                      : const SizedBox.shrink()
+                  // validateClientControll.value
+                  //     ? const Text(
+                  //         'Adicione um cliente',
+                  //         style: TextStyle(color: Colors.red),
+                  //       )
+                  //     : const SizedBox.shrink()
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  border: const Border(
-                    left: BorderSide(
-                      color: Colors.black,
-                      width: 5.0,
+              Obx(() => Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        left: BorderSide(
+                          color: clientValidation.value
+                              ? Colors.green
+                              : Colors.black,
+                          width: 5.0,
+                        ),
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                      color: Colors.grey.shade300,
                     ),
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.grey.shade200,
-                ),
-                height: 100,
-                width: double.infinity,
-                child: Obx(
-                  () => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Text('Nome: ${nameClient.value}'),
-                      Text('Telefone: ${phoneClient.value}'),
-                      Text('Email: ${emailClient.value}')
-                    ],
-                  ),
-                ),
-              ),
+                    height: 100,
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Text('Nome: ${nameClient.value}'),
+                        Text('Telefone: ${phoneClient.value}'),
+                        Text('Email: ${emailClient.value}')
+                      ],
+                    ),
+                  )),
               Row(
                 children: [
                   const Text(
@@ -124,7 +125,7 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                           yearCar.value = car!.year;
                           notesCar.value = car!.notes;
                           colorCar.value = car!.color;
-                          validateClientControll.value = false;
+                          //validateClientControll.value = false;
                         }
                       },
                       icon: const Icon(Icons.add)),
@@ -140,7 +141,7 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                     ),
                   ),
                   borderRadius: BorderRadius.circular(5),
-                  color: Colors.grey.shade200,
+                  color: Colors.grey.shade300,
                 ),
                 height: 200,
                 width: double.infinity,
@@ -179,7 +180,7 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                     ),
                   ),
                   borderRadius: BorderRadius.circular(5),
-                  color: Colors.grey.shade200,
+                  color: Colors.grey.shade300,
                 ),
                 //margin: const EdgeInsets.symmetric(horizontal: 10),
                 padding:
@@ -245,6 +246,20 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
               ),
             ],
           ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(10),
+        height: 60,
+        width: double.infinity,
+        decoration: BoxDecoration(color: Colors.grey.shade700),
+        child: ElevatedButton(
+          onPressed: () {
+            if (client != null) {
+              clientValidation.value = true;
+            }
+          },
+          child: const Text('Salvar Ordem de Serviço'),
         ),
       ),
     );
