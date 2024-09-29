@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/get_rx.dart';
 import 'package:servicemangerapp/src/data/model/car.dart';
 import 'package:servicemangerapp/src/data/model/client.dart';
 import 'package:servicemangerapp/src/data/provider/firebase_provider.dart';
@@ -32,11 +31,15 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
   var discription = ''.obs;
 
   var clientValidation = false.obs;
+  var carValidation = false.obs;
+  var descriptionValidation = false.obs;
+  var photosCarValidation = false.obs;
+  var signValidation = false.obs;
+
+  TextEditingController descriptionController = TextEditingController();
 
   List<File> listImagePath = [];
   List<int> listSignData = [];
-
-  //RxBool validateClientControll = false.obs;
 
   Client? client;
   Car? car;
@@ -54,52 +57,50 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  const Text(
-                    'Cliente',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  IconButton(
-                    iconSize: 30,
-                    onPressed: () async {
-                      managerProvider.controlAddClientPage.value = true;
-                      client = await Get.to(() => PageListClientes());
-                      if (client != null) {
-                        nameClient.value = client!.name;
-                        phoneClient.value = client!.phone;
-                        emailClient.value = client!.email;
-                        clientValidation.value = true;
-                      }
-                      managerProvider.controlAddClientPage.value = false;
-                    },
-                    icon: const Icon(Icons.add),
-                  ),
-                  // validateClientControll.value
-                  //     ? const Text(
-                  //         'Adicione um cliente',
-                  //         style: TextStyle(color: Colors.red),
-                  //       )
-                  //     : const SizedBox.shrink()
-                ],
-              ),
-              Obx(() => Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        left: BorderSide(
-                          color: clientValidation.value
-                              ? Colors.green
-                              : Colors.black,
-                          width: 5.0,
-                        ),
+              Obx(() => Row(
+                    children: [
+                      const Text(
+                        'Cliente',
+                        style: TextStyle(fontSize: 20),
                       ),
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.grey.shade300,
+                      IconButton(
+                        iconSize: 30,
+                        onPressed: () async {
+                          managerProvider.controlAddClientPage.value = true;
+                          client = await Get.to(() => PageListClientes());
+                          if (client != null) {
+                            nameClient.value = client!.name;
+                            phoneClient.value = client!.phone;
+                            emailClient.value = client!.email;
+                            clientValidation.value = false;
+                          }
+                          managerProvider.controlAddClientPage.value = false;
+                        },
+                        icon: const Icon(Icons.add),
+                      ),
+                      clientValidation.value
+                          ? const Text(
+                              'Adicione um cliente',
+                              style: TextStyle(color: Colors.red),
+                            )
+                          : const SizedBox.shrink()
+                    ],
+                  )),
+              Container(
+                padding: const EdgeInsets.all(5),
+                decoration: BoxDecoration(
+                  border: const Border(
+                    left: BorderSide(
+                      color: Colors.black,
+                      width: 5.0,
                     ),
-                    height: 100,
-                    width: double.infinity,
-                    child: Column(
+                  ),
+                  borderRadius: BorderRadius.circular(5),
+                  color: Colors.grey.shade300,
+                ),
+                height: 100,
+                width: double.infinity,
+                child: Obx(() => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -107,30 +108,36 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                         Text('Telefone: ${phoneClient.value}'),
                         Text('Email: ${emailClient.value}')
                       ],
-                    ),
-                  )),
-              Row(
-                children: [
-                  const Text(
-                    'Carro',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  IconButton(
-                      iconSize: 30,
-                      onPressed: () async {
-                        car = await Get.to(() => const PageAddCarOs());
-                        if (car != null) {
-                          nameCar.value = car!.model;
-                          brandCar.value = car!.brand;
-                          yearCar.value = car!.year;
-                          notesCar.value = car!.notes;
-                          colorCar.value = car!.color;
-                          //validateClientControll.value = false;
-                        }
-                      },
-                      icon: const Icon(Icons.add)),
-                ],
+                    )),
               ),
+              Obx(() => Row(
+                    children: [
+                      const Text(
+                        'Carro',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      IconButton(
+                          iconSize: 30,
+                          onPressed: () async {
+                            car = await Get.to(() => const PageAddCarOs());
+                            if (car != null) {
+                              nameCar.value = car!.model;
+                              brandCar.value = car!.brand;
+                              yearCar.value = car!.year;
+                              notesCar.value = car!.notes;
+                              colorCar.value = car!.color;
+                              carValidation.value = false;
+                            }
+                          },
+                          icon: const Icon(Icons.add)),
+                      carValidation.value
+                          ? const Text(
+                              'Adicione um carro',
+                              style: TextStyle(color: Colors.red),
+                            )
+                          : const SizedBox.shrink()
+                    ],
+                  )),
               Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
@@ -159,18 +166,28 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                   ),
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Descrição do defeito',
-                      style: TextStyle(fontSize: 20),
+              Obx(() => Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Descrição',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        descriptionValidation.value
+                            // ignore: prefer_const_constructors
+                            ? Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: const Text(
+                                  'Insira a descrição do defeito',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              )
+                            : const SizedBox.shrink()
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  )),
               Container(
                 decoration: BoxDecoration(
                   border: const Border(
@@ -193,7 +210,9 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                       'Descrição do defeito:',
                     ),
                     TextFormField(
+                      controller: descriptionController,
                       onChanged: (value) {
+                        descriptionValidation.value = false;
                         discription.value = value;
                       },
                       minLines: 1,
@@ -205,32 +224,54 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                   ],
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Fotos do Carro',
-                      style: TextStyle(fontSize: 20),
+              Obx(() => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      children: [
+                        const Text(
+                          'Fotos do Carro',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        photosCarValidation.value
+                            ? const Padding(
+                                padding: EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  'Insira pelo menos uma foto',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.red),
+                                ),
+                              )
+                            : const SizedBox.shrink()
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  )),
               Camera(finalReturn: (List<File> value) {
                 listImagePath = value;
+                if (listImagePath.isNotEmpty) {
+                  photosCarValidation.value = false;
+                }
               }),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: Row(
-                  children: [
-                    Text(
-                      'Assinatura',
-                      style: TextStyle(fontSize: 20),
+              Obx(() => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Row(
+                      children: [
+                        const Text(
+                          'Assinatura',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        signValidation.value
+                            ? const Padding(
+                                padding: EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  'Assine e confirme',
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.red),
+                                ),
+                              )
+                            : const SizedBox.shrink()
+                      ],
                     ),
-                  ],
-                ),
-              ),
+                  )),
               Signaturewidget(
                 dataSign: (uint8List) {
                   setState(() {
@@ -239,6 +280,7 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                     } else {
                       for (var x in uint8List) {
                         listSignData.add(x);
+                        signValidation.value = false;
                       }
                     }
                   });
@@ -255,8 +297,39 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
         decoration: BoxDecoration(color: Colors.grey.shade700),
         child: ElevatedButton(
           onPressed: () {
-            if (client != null) {
+            if (client == null) {
               clientValidation.value = true;
+            } else {
+              clientValidation.value = false;
+            }
+            if (car == null) {
+              carValidation.value = true;
+            } else {
+              carValidation.value = false;
+            }
+            if (descriptionController.text.isEmpty) {
+              descriptionValidation.value = true;
+            } else {
+              descriptionValidation.value = false;
+            }
+
+            if (listSignData.isEmpty) {
+              signValidation.value = true;
+            } else {
+              signValidation.value = false;
+            }
+            if (listImagePath.isEmpty) {
+              photosCarValidation.value = true;
+            } else {
+              photosCarValidation.value = false;
+            }
+
+            if (!clientValidation.value &&
+                !carValidation.value &&
+                !descriptionValidation.value &&
+                !signValidation.value &&
+                !photosCarValidation.value) {
+              print('validação OK');
             }
           },
           child: const Text('Salvar Ordem de Serviço'),

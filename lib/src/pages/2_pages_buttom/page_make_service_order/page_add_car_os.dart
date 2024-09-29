@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:servicemangerapp/src/data/constants.dart';
 import 'package:servicemangerapp/src/data/model/car.dart';
+import 'package:servicemangerapp/src/data/sharedPreferences/sharedPref.dart';
 import 'package:servicemangerapp/src/utils/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PageAddCarOs extends StatefulWidget {
   const PageAddCarOs({super.key});
@@ -29,6 +31,8 @@ class _PageAddCarOsState extends State<PageAddCarOs> {
   final List<String> carsVolkswagen = Constants.carsVolkswagen;
 
   List<String> carModels = [];
+
+  Sharedpref sharedpref = Sharedpref();
 
   @override
   Widget build(BuildContext context) {
