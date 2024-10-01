@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:servicemangerapp/src/data/provider/listPart_Provider.dart';
 import 'package:servicemangerapp/src/data/provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:servicemangerapp/src/data/ProviderCarDetails/ProviderCarDetails.dart';
 import 'package:servicemangerapp/src/pages/0_pages_login/page_splash/page_splash.dart';
 import 'package:servicemangerapp/src/pages/3_parts/page_part.dart';
 import 'package:servicemangerapp/test/home_teste.dart';
@@ -21,7 +22,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => MyProvider()),
         ChangeNotifierProvider(create: (context) => ListPartProvider2()),
-        ChangeNotifierProvider(create: (context) => PartsProvider()),
+        ChangeNotifierProvider(
+            create: (context) => PartsProvider()), //ProviderCarDetails
       ],
       child: const MyApp(),
     ),

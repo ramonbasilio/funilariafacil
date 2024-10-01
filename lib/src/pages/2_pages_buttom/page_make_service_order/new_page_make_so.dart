@@ -1,13 +1,19 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:servicemangerapp/src/data/model/car.dart';
 import 'package:servicemangerapp/src/data/model/client.dart';
+import 'package:servicemangerapp/src/data/model/service_order_new.dart';
 import 'package:servicemangerapp/src/data/provider/firebase_provider.dart';
+import 'package:servicemangerapp/src/data/provider/provider.dart';
+import 'package:servicemangerapp/src/data/repository/firebase_storage.dart';
 import 'package:servicemangerapp/src/pages/2_pages_buttom/page_clients/page_list_clientes.dart';
 import 'package:servicemangerapp/src/pages/2_pages_buttom/page_make_service_order/page_add_car_os.dart';
 import 'package:servicemangerapp/src/pages/2_pages_buttom/page_make_service_order/widget/camera.dart';
 import 'package:servicemangerapp/src/pages/widgets/signatureWidget.dart';
+
+import '../../../data/repository/firebase_cloud_firestore.dart';
 
 class NewPageMakeSo extends StatefulWidget {
   int numberServiceOrder;
@@ -27,14 +33,16 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
   var brandCar = ''.obs;
   var colorCar = ''.obs;
   var yearCar = ''.obs;
+  var date = ''.obs;
   var notesCar = ''.obs;
-  var discription = ''.obs;
+  var description = ''.obs;
 
   var clientValidation = false.obs;
   var carValidation = false.obs;
   var descriptionValidation = false.obs;
   var photosCarValidation = false.obs;
   var signValidation = false.obs;
+  var loading = false.obs;
 
   TextEditingController descriptionController = TextEditingController();
 
@@ -46,9 +54,10 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
 
   @override
   Widget build(BuildContext context) {
+    MyProvider value = Provider.of<MyProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ordem de Serviço - 12345'),
+        title: Text('Ordem de Serviço - ${widget.numberServiceOrder}'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -126,6 +135,7 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                               yearCar.value = car!.year;
                               notesCar.value = car!.notes;
                               colorCar.value = car!.color;
+                              date.value = car!.date;
                               carValidation.value = false;
                             }
                           },
@@ -161,6 +171,7 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                       Text('Marca: ${brandCar.value}'),
                       Text('Cor: ${colorCar.value}'),
                       Text('Ano: ${yearCar.value}'),
+                      Text('Data entrada na oficina: ${date.value}'),
                       Text('Notas: ${notesCar.value}'),
                     ],
                   ),
@@ -213,7 +224,7 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                       controller: descriptionController,
                       onChanged: (value) {
                         descriptionValidation.value = false;
-                        discription.value = value;
+                        description.value = value;
                       },
                       minLines: 1,
                       maxLines: 3,
@@ -291,50 +302,68 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
         ),
       ),
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.all(10),
-        height: 60,
-        width: double.infinity,
-        decoration: BoxDecoration(color: Colors.grey.shade700),
-        child: ElevatedButton(
-          onPressed: () {
-            if (client == null) {
-              clientValidation.value = true;
-            } else {
-              clientValidation.value = false;
-            }
-            if (car == null) {
-              carValidation.value = true;
-            } else {
-              carValidation.value = false;
-            }
-            if (descriptionController.text.isEmpty) {
-              descriptionValidation.value = true;
-            } else {
-              descriptionValidation.value = false;
-            }
+            padding: const EdgeInsets.all(10),
+            height: 60,
+            width: double.infinity,
+            decoration: BoxDecoration(color: Colors.grey.shade700),
+            child: ElevatedButton(
+              onPressed: () {
+                if (client == null) {
+                  clientValidation.value = true;
+                } else {
+                  clientValidation.value = false;
+                }
+                if (car == null) {
+                  carValidation.value = true;
+                } else {
+                  carValidation.value = false;
+                }
+                if (descriptionController.text.isEmpty) {
+                  descriptionValidation.value = true;
+                } else {
+                  descriptionValidation.value = false;
+                }
 
-            if (listSignData.isEmpty) {
-              signValidation.value = true;
-            } else {
-              signValidation.value = false;
-            }
-            if (listImagePath.isEmpty) {
-              photosCarValidation.value = true;
-            } else {
-              photosCarValidation.value = false;
-            }
+                if (listSignData.isEmpty) {
+                  signValidation.value = true;
+                } else {
+                  signValidation.value = false;
+                }
+                if (listImagePath.isEmpty) {
+                  photosCarValidation.value = true;
+                } else {
+                  photosCarValidation.value = false;
+                }
 
-            if (!clientValidation.value &&
-                !carValidation.value &&
-                !descriptionValidation.value &&
-                !signValidation.value &&
-                !photosCarValidation.value) {
-              print('validação OK');
-            }
-          },
-          child: const Text('Salvar Ordem de Serviço'),
-        ),
-      ),
+                if (!clientValidation.value &&
+                    !carValidation.value &&
+                    !descriptionValidation.value &&
+                    !signValidation.value &&
+                    !photosCarValidation.value) {
+                  loading.value = true;
+                  Firebasetorage().uploadImageStorage(
+                    pathList: listImagePath,
+                    signList: listSignData,
+                    context: context,
+                  );
+
+                  ServiceOrderNew serviceOrderNew = ServiceOrderNew(
+                      id: widget.numberServiceOrder.toString(),
+                      client: client!,
+                      car: car!,
+                      description: descriptionController.text,
+                      pathImages: value.getList(),
+                      pathSign: value.getUrl(),
+                      date: car!.date);
+
+                  FirebaseCloudFirestore().registerReceiverOrderCar(
+                      receiverDoc: serviceOrderNew, context: context);
+                  loading.value = false;
+                }
+              },
+              child: Obx(() => loading.value ? Text('Salvar Ordem de Serviço') : CircularProgressIndicator()),
+            ),
+          ),
     );
   }
 }

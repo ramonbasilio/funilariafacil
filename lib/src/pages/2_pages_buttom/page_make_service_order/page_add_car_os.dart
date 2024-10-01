@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/formatters/masked_input_formatter.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:servicemangerapp/src/data/constants.dart';
 import 'package:servicemangerapp/src/data/model/car.dart';
-import 'package:servicemangerapp/src/data/sharedPreferences/sharedPref.dart';
+import 'package:servicemangerapp/src/data/ProviderCarDetails/ProviderCarDetails.dart';
 import 'package:servicemangerapp/src/utils/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +21,7 @@ class _PageAddCarOsState extends State<PageAddCarOs> {
   String? selectedYear;
   String? selectedColor;
   TextEditingController notesController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
 
   final List<String> carBrands = Constants.carsBrand;
   final List<String> carsChevrolet = Constants.carsChevrolet;
@@ -31,8 +34,6 @@ class _PageAddCarOsState extends State<PageAddCarOs> {
   final List<String> carsVolkswagen = Constants.carsVolkswagen;
 
   List<String> carModels = [];
-
-  Sharedpref sharedpref = Sharedpref();
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +95,7 @@ class _PageAddCarOsState extends State<PageAddCarOs> {
 
               // Campo de inserção do ano
               TextFormField(
+                inputFormatters: [MaskedInputFormatter('####')],
                 decoration: const InputDecoration(labelText: 'Ano do carro'),
                 keyboardType: TextInputType.number,
                 onChanged: (value) {
@@ -110,6 +112,14 @@ class _PageAddCarOsState extends State<PageAddCarOs> {
                     selectedColor = value;
                   });
                 },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                keyboardType: TextInputType.datetime,
+                inputFormatters: [MaskedInputFormatter('##/##/####')],
+                controller: dateController,
+                decoration:
+                    const InputDecoration(labelText: 'Data entrada na oficina'),
               ),
               const SizedBox(height: 16),
               // Campo para notas
@@ -131,12 +141,14 @@ class _PageAddCarOsState extends State<PageAddCarOs> {
                   if (selectedBrand!.isNotEmpty &&
                       selectedModel!.isNotEmpty &&
                       selectedColor!.isNotEmpty &&
+                      dateController.text.isNotEmpty &&
                       selectedYear!.isNotEmpty) {
                     Car car = Car(
                         model: selectedBrand!,
                         brand: selectedModel!,
                         color: selectedColor!,
                         year: selectedYear!,
+                        date: dateController.text,
                         notes: notesController.text == ''
                             ? 'Sem notas'
                             : notesController.text);

@@ -57,6 +57,7 @@ dependencies:
   vibration: ^2.0.0
   widget_zoom: ^0.0.4
   shared_preferences: ^2.3.2
+  flutter_multi_formatter: ^2.13.0
 
 dev_dependencies:
   flutter_test:

@@ -7,11 +7,13 @@ class Car {
   final String color;
   final String year;
   final String notes;
+  final String date;
   Car({
     required this.model,
     required this.brand,
-    required this. color,
+    required this.color,
     required this.year,
+    required this.date,
     this.notes = '',
   });
 
@@ -30,6 +32,7 @@ class Car {
       color: map['color'] as String,
       brand: map['brand'] as String,
       year: map['year'] as String,
+      date: map['date'] as String,
       notes: map['notes'] ?? '',
     );
   }

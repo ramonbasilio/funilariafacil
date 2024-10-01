@@ -6,6 +6,7 @@ import 'package:servicemangerapp/src/alerts/alerts_dialog.dart';
 import 'package:servicemangerapp/src/data/model/client.dart';
 import 'package:servicemangerapp/src/data/model/part.dart';
 import 'package:servicemangerapp/src/data/model/service_order.dart';
+import 'package:servicemangerapp/src/data/model/service_order_new.dart';
 import 'package:servicemangerapp/src/data/model/user.dart';
 import 'package:servicemangerapp/src/pages/0_pages_login/page_splash/page_splash.dart';
 
@@ -93,6 +94,31 @@ class FirebaseCloudFirestore {
           .doc(_firebaseAuth.currentUser!.email)
           .collection('Service Order')
           .doc(receiverDoc.numberDoc)
+          .set(receiverDoc.toMap());
+      if (context.mounted) {
+        AlertsDialog.snackBarMessageFirebaseAuth(context,
+            messageOpcional: 'Salvo com sucesso!',
+            colorMessage: Colors.blueAccent);
+      }
+
+      Get.off(() => const PageSplash());
+    } on FirebaseException catch (_) {
+      if (context.mounted) {
+        AlertsDialog.snackBarMessageFirebaseAuth(context,
+            messageOpcional: 'Falha ao salvar!', colorMessage: Colors.red);
+      }
+    }
+  }
+
+  Future<void> registerReceiverOrderCar(
+      {required ServiceOrderNew receiverDoc,
+      required BuildContext context}) async {
+    try {
+      await _firebaseFirestore
+          .collection('User')
+          .doc(_firebaseAuth.currentUser!.email)
+          .collection('Service Order')
+          .doc(receiverDoc.id)
           .set(receiverDoc.toMap());
       if (context.mounted) {
         AlertsDialog.snackBarMessageFirebaseAuth(context,
