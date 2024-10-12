@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:servicemangerapp/src/data/model/client.dart';
 import 'package:servicemangerapp/src/data/model/part.dart';
 import 'package:servicemangerapp/src/data/model/service_order.dart';
+import 'package:servicemangerapp/src/data/model/service_order_new.dart';
 import 'package:servicemangerapp/src/data/model/user.dart';
 import 'package:servicemangerapp/src/data/repository/firebase_cloud_firestore.dart';
 
@@ -10,6 +11,7 @@ class ManagerProvider extends GetxController {
   var controlAddClientPage = false.obs;
   var foundClients = <Client>[].obs;
   var allServiceOrder = <ServiceOrder>[].obs;
+  var allServiceOrderCar = <ServiceOrderCar>[].obs;
   var allParts = <Part>[].obs;
   var listParts = <Part>[].obs;
 
@@ -23,7 +25,8 @@ class ManagerProvider extends GetxController {
 
   Future<void> reloadProvider() async {
     await getAllClientsProvider();
-    await getAllServiceOrderProvider();
+    //await getAllServiceOrderProvider();
+    await getAllServiceOrderCarProvider();
     await getUserProfile();
   }
 
@@ -85,6 +88,13 @@ class ManagerProvider extends GetxController {
         await _firebaseRepository.getAllServiceOrders();
     response!.sort((a, b) => b.date!.compareTo(a.date!));
     allServiceOrder.value = response;
+  }
+
+  Future<void> getAllServiceOrderCarProvider() async {
+    List<ServiceOrderCar>? response =
+        await _firebaseRepository.getAllServiceOrderCars();
+    // response!.sort((a, b) => b.date.compareTo(a.date));
+    allServiceOrderCar.value = response!;
   }
 
   Future<void> getAllPartsProvider() async {

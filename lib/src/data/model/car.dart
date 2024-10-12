@@ -23,6 +23,8 @@ class Car {
       'brand': brand,
       'year': year,
       'notes': notes,
+      'color':color,
+      'date':date,
     };
   }
 

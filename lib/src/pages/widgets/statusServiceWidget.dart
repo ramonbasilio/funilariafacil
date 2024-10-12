@@ -50,7 +50,7 @@ class StatusServiceWidget extends StatelessWidget {
                   children: [
                     const Text('Ordens de Serviços totais'),
                     Obx(() => Text(
-                        managerProvider.allServiceOrder.length.toString())),
+                        managerProvider.allServiceOrderCar.length.toString())),
                   ],
                 ),
                 const Row(

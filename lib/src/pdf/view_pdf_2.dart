@@ -44,8 +44,9 @@ class _ViwerPdfState extends State<ViwerPdf> {
           PDFView(
             filePath: widget.path,
             enableSwipe: true,
-            swipeHorizontal: true,
-            autoSpacing: false,
+            swipeHorizontal: false,
+            autoSpacing: true,
+            pageSnap: false,
             pageFling: false,
             onRender: (_pages) {
               setState(() {

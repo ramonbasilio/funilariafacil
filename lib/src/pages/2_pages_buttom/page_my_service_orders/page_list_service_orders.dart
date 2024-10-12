@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:servicemangerapp/src/data/model/service_order.dart';
+import 'package:servicemangerapp/src/data/model/service_order_new.dart';
 import 'package:servicemangerapp/src/data/provider/firebase_provider.dart';
 import 'package:servicemangerapp/src/extensions/extensions.dart';
 import 'package:servicemangerapp/src/pages/2_pages_buttom/page_my_service_orders/page_edit_service_order.dart';
@@ -18,7 +19,7 @@ class PageListServiceOrders extends StatelessWidget {
   var loading = false.obs;
   @override
   Widget build(BuildContext context) {
-    _managerProvider.getAllServiceOrderProvider();
+    _managerProvider.getAllServiceOrderCarProvider();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Minhas Ordens de Serviço'),
@@ -31,45 +32,46 @@ class PageListServiceOrders extends StatelessWidget {
           children: [
             Flexible(
               child: Obx(
-                () => _managerProvider.allServiceOrder.isEmpty
+                () => _managerProvider.allServiceOrderCar.isEmpty
                     ? const Text('Nenhum Ordem de Serviço')
                     : ListView.builder(
-                        itemCount: _managerProvider.allServiceOrder.length,
+                        itemCount: _managerProvider.allServiceOrderCar.length,
                         itemBuilder: (context, index) {
                           return Column(
                             children: [
                               ListTile(
                                 onTap: () {
-                                  _showBottomSheet(context,
-                                      _managerProvider.allServiceOrder[index]);
+                                  _showBottomSheet(
+                                      context,
+                                      _managerProvider
+                                          .allServiceOrderCar[index]);
                                 },
                                 leading: Column(
                                   children: [
                                     Text(
-                                      _managerProvider
-                                          .allServiceOrder[index].client.name,
+                                      _managerProvider.allServiceOrderCar[index]
+                                          .client.name,
                                       style: const TextStyle(fontSize: 16),
                                     ),
-                                    Text(Utils.convertDate(_managerProvider
-                                        .allServiceOrder[index].date!
-                                        ))
+                                    Text(_managerProvider
+                                        .allServiceOrderCar[index].date)
                                   ],
                                 ),
                                 title: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                        ('Dispositivo: ${_managerProvider.allServiceOrder[index].numberDoc}')),
+                                        ('OS: ${_managerProvider.allServiceOrderCar[index].id}')),
                                     Text(
-                                        ('Dispositivo: ${_managerProvider.allServiceOrder[index].equipment}')),
+                                        ('Modelo: ${_managerProvider.allServiceOrderCar[index].car.brand}')),
                                     Text(
-                                        'Marca: ${(_managerProvider.allServiceOrder[index].brand)}'),
+                                        'Marca: ${(_managerProvider.allServiceOrderCar[index].car.model)}'),
                                     Text(
-                                        'Modelo: ${(_managerProvider.allServiceOrder[index].model)}'),
+                                        'Cliente: ${(_managerProvider.allServiceOrderCar[index].client.name)}'),
                                   ],
                                 ),
                                 subtitle: Text(
-                                  ('Defeito: ${_managerProvider.allServiceOrder[index].defect}'),
+                                  ('Defeito: ${_managerProvider.allServiceOrderCar[index].description}'),
                                   style: const TextStyle(fontSize: 15),
                                 ),
                               ),
@@ -86,7 +88,7 @@ class PageListServiceOrders extends StatelessWidget {
     );
   }
 
-  void _showBottomSheet(BuildContext context, ServiceOrder serviceOrder) {
+  void _showBottomSheet(BuildContext context, ServiceOrderCar serviceOrderCar) {
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -97,31 +99,34 @@ class PageListServiceOrders extends StatelessWidget {
                     leading: const Icon(Icons.monetization_on),
                     title: const Text('Gerar Orçamento'),
                     onTap: () => {
-                      Get.back(),
-                      Get.to(()=>PageQuote(serviceOrder: serviceOrder,)),
-                    }),
+                          Get.back(),
+                          // Get.to(() => PageQuote(
+                          //       serviceOrder: serviceOrder,
+                          //     )),
+                        }),
                 ListTile(
                     leading: const Icon(Icons.edit),
                     title: const Text('Editar'),
                     onTap: () => {
                           Get.back(),
-                          Get.to(() => PageEditServiceOrder(
-                                serviceOrder: serviceOrder,
-                              )),
+                          // Get.to(() => PageEditServiceOrder(
+                          //       serviceOrder: serviceOrder,
+                          //     )),
                         }),
                 ListTile(
                   leading: const Icon(Icons.share),
                   title: Obx(() => !loading.value
                       ? const Text('Compartilhar')
                       : const SizedBox(
-                        height: 5,
-                        width: 5,
-                        child: LinearProgressIndicator())),
+                          height: 5,
+                          width: 5,
+                          child: LinearProgressIndicator())),
                   onTap: () async {
                     loading.value = true;
                     Future.delayed(const Duration(seconds: 5));
-                    File pdfFile = await GeneratePdf(serviceOrder: serviceOrder)
-                        .createPdf();
+                    File pdfFile =
+                        await GeneratePdf(serviceOrderCar: serviceOrderCar)
+                            .createPdf();
                     Get.to(() => ViwerPdf(
                           path: pdfFile.path,
                         ));
@@ -133,8 +138,8 @@ class PageListServiceOrders extends StatelessWidget {
                   title: const Text('Deletar'),
                   onTap: () => {
                     Get.back(),
-                    DeleteServiceOrderConfirmation()
-                        .showConfirmationDialog(context, serviceOrder.numberDoc)
+                    // DeleteServiceOrderConfirmation()
+                    //     .showConfirmationDialog(context, serviceOrder.numberDoc)
                   },
                 ),
               ],

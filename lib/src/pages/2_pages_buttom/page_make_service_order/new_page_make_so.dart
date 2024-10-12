@@ -302,12 +302,12 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
         ),
       ),
       bottomNavigationBar: Container(
-            padding: const EdgeInsets.all(10),
-            height: 60,
-            width: double.infinity,
-            decoration: BoxDecoration(color: Colors.grey.shade700),
-            child: ElevatedButton(
-              onPressed: () {
+        padding: const EdgeInsets.all(10),
+        height: 60,
+        width: double.infinity,
+        decoration: BoxDecoration(color: Colors.grey.shade800),
+        child: Obx(() => ElevatedButton(
+              onPressed: () async {
                 if (client == null) {
                   clientValidation.value = true;
                 } else {
@@ -341,13 +341,14 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                     !signValidation.value &&
                     !photosCarValidation.value) {
                   loading.value = true;
-                  Firebasetorage().uploadImageStorage(
+
+                  await Firebasetorage().uploadImageStorage(
                     pathList: listImagePath,
                     signList: listSignData,
                     context: context,
                   );
 
-                  ServiceOrderNew serviceOrderNew = ServiceOrderNew(
+                  ServiceOrderCar serviceOrderNew = ServiceOrderCar(
                       id: widget.numberServiceOrder.toString(),
                       client: client!,
                       car: car!,
@@ -356,14 +357,17 @@ class _NewPageMakeSoState extends State<NewPageMakeSo> {
                       pathSign: value.getUrl(),
                       date: car!.date);
 
-                  FirebaseCloudFirestore().registerReceiverOrderCar(
+                  await FirebaseCloudFirestore().registerReceiverOrderCar(
                       receiverDoc: serviceOrderNew, context: context);
+
                   loading.value = false;
                 }
               },
-              child: Obx(() => loading.value ? Text('Salvar Ordem de Serviço') : CircularProgressIndicator()),
-            ),
-          ),
+              child: loading.value
+                  ? CircularProgressIndicator()
+                  : Text('Salvar Ordem de Serviço'),
+            )),
+      ),
     );
   }
 }

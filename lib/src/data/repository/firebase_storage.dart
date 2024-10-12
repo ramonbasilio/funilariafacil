@@ -54,7 +54,7 @@ class Firebasetorage {
     }
   }
 
-  void uploadImageStorage(
+  Future<void> uploadImageStorage(
       {required List<File> pathList,
       required List<int> signList,
       required BuildContext context}) async {

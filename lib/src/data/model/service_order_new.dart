@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:servicemangerapp/src/data/model/car.dart';
 import 'package:servicemangerapp/src/data/model/client.dart';
 
-class ServiceOrderNew {
+class ServiceOrderCar {
   final String id;
   final Client client;
   final Car car;
@@ -13,7 +13,7 @@ class ServiceOrderNew {
   final String pathSign;
   final String date;
 
-  ServiceOrderNew({
+  ServiceOrderCar({
     required this.id,
     required this.client,
     required this.car,
@@ -35,8 +35,8 @@ class ServiceOrderNew {
     };
   }
 
-  factory ServiceOrderNew.fromMap(Map<String, dynamic> map) {
-    return ServiceOrderNew(
+  factory ServiceOrderCar.fromMap(Map<String, dynamic> map) {
+    return ServiceOrderCar(
       id: map['id'] as String,
       client: Client.fromMap(map['client'] as Map<String, dynamic>),
       car: Car.fromMap(map['car'] as Map<String, dynamic>),
@@ -49,6 +49,6 @@ class ServiceOrderNew {
 
   String toJson() => json.encode(toMap());
 
-  factory ServiceOrderNew.fromJson(String source) =>
-      ServiceOrderNew.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ServiceOrderCar.fromJson(String source) =>
+      ServiceOrderCar.fromMap(json.decode(source) as Map<String, dynamic>);
 }

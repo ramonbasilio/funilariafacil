@@ -111,7 +111,7 @@ class FirebaseCloudFirestore {
   }
 
   Future<void> registerReceiverOrderCar(
-      {required ServiceOrderNew receiverDoc,
+      {required ServiceOrderCar receiverDoc,
       required BuildContext context}) async {
     try {
       await _firebaseFirestore
@@ -122,11 +122,10 @@ class FirebaseCloudFirestore {
           .set(receiverDoc.toMap());
       if (context.mounted) {
         AlertsDialog.snackBarMessageFirebaseAuth(context,
-            messageOpcional: 'Salvo com sucesso!',
-            colorMessage: Colors.blueAccent);
+            messageOpcional: 'Salvo com sucesso!', colorMessage: Colors.green);
       }
 
-      Get.off(() => const PageSplash());
+      //Get.off(() => const PageSplash());
     } on FirebaseException catch (_) {
       if (context.mounted) {
         AlertsDialog.snackBarMessageFirebaseAuth(context,
@@ -146,6 +145,26 @@ class FirebaseCloudFirestore {
           .then((querySnapshot) {
         for (var docSnapshot in querySnapshot.docs) {
           listServiceOrder.add(ServiceOrder.fromMap(docSnapshot.data()));
+        }
+      });
+      return listServiceOrder;
+    } on FirebaseException catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<List<ServiceOrderCar>?> getAllServiceOrderCars() async {
+    List<ServiceOrderCar> listServiceOrder = [];
+    try {
+      await _firebaseFirestore
+          .collection('User')
+          .doc(_firebaseAuth.currentUser!.email)
+          .collection('Service Order')
+          .get()
+          .then((querySnapshot) {
+        for (var docSnapshot in querySnapshot.docs) {
+          listServiceOrder.add(ServiceOrderCar.fromMap(docSnapshot.data()));
         }
       });
       return listServiceOrder;

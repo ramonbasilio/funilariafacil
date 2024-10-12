@@ -39,7 +39,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Service Manager App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+            primary: Colors.grey.shade900, seedColor: Colors.black),
         useMaterial3: true,
       ),
       home: PageSplash(),
